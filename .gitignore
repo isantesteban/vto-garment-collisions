@@ -1,0 +1,5 @@
+venv
+results
+assets/CMU/*
+assets/SMPL/*
+__pycache__
