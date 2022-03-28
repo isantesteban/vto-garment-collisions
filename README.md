@@ -36,9 +36,12 @@ vto-garment-collisions
 
 ## Download trained models
 
-1. Download models of the diffused human body: https://github.com/isantesteban/vto-garment-collisions/releases/download/trained-models/trained_models_diffused_body.zip
-2. Download models of the garment: https://github.com/isantesteban/vto-garment-collisions/releases/download/tshirt-trained-models/trained_models_tshirt.zip
-3. Create ```trained_models``` directory and extract ```trained_models_diffused_body.zip``` and ```trained_models_tshirt.zip``` there.
+1. Download models of the diffused human body: 
+- https://github.com/isantesteban/vto-garment-collisions/releases/download/trained-models/trained_models_diffused_body.zip
+2. Download models of the garments: 
+- T-shirt: https://github.com/isantesteban/vto-garment-collisions/releases/download/tshirt-trained-models/trained_models_tshirt.zip
+- Dress: https://github.com/isantesteban/vto-garment-collisions/releases/download/dress-trained-models/trained_models_dress.zip
+3. Create ```trained_models``` directory and extract ```trained_models_diffused_body.zip```, ```trained_models_tshirt.zip``` and ```trained_models_dress.zip``` there.
 
 ## Download human model
 
@@ -60,9 +63,18 @@ tar -C assets/ -xf ~/Downloads/CMU.tar.bz2 CMU/
 To generate the deformed garment meshes for a given sequence:
 
 ```sh
-python run_model.py assets/CMU/07/07_02_poses.npz --export_dir results/07_02
+python run_model.py assets/CMU/07/07_02_poses.npz trained_models/tshirt --export_dir results/tshirt/07_02
 ```
 
+To generate garment deformation for sequences [in the dataset](https://github.com/isantesteban/vto-dataset) first download the repository:
+```sh
+git clone https://github.com/isantesteban/vto-dataset.git
+```
+
+and then run:
+```sh
+python run_model.py vto-dataset/dress/simulations/dress_shape00_01_01.pkl trained_models/dress --export_dir results/dress/01_01
+```
 
 # Rendering
 **Requirements**: ```blender-2.93```, ```ffmpeg```
@@ -70,7 +82,7 @@ python run_model.py assets/CMU/07/07_02_poses.npz --export_dir results/07_02
 To render the meshes:
 
 ```sh
-blender --background rendering/scene.blend --python rendering/render.py --path results/07_02
+blender --background rendering/scene.blend --python rendering/render.py --path results/tshirt/07_02
 ```
 
 ![Render](assets/images/render.gif "Video rendered by Blender")

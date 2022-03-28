@@ -1,4 +1,5 @@
 import os
+import pickle
 
 import numpy as np
 import tensorflow as tf
@@ -6,6 +7,11 @@ from scipy.spatial.transform import Rotation as R
 
 
 def load_motion(path, separate_arms=True):
+    filename, file_extension = os.path.splitext(path)
+
+    if file_extension == ".pkl":
+        return load_motion_dataset(path)
+
     motion_dict = dict(np.load(path))
 
     # The recurrent regressor is trained with 30fps sequences
@@ -46,6 +52,17 @@ def load_motion(path, separate_arms=True):
         "pose": poses.astype(np.float32),
         "shape": shape.astype(np.float32),
         "translation": trans.astype(np.float32),   
+    }
+
+
+def load_motion_dataset(path):
+    with open(path, "rb") as f:
+        motion_dict = pickle.load(f)
+  
+    return {
+        "pose": motion_dict["pose"].astype(np.float32),
+        "shape": motion_dict["shape"][0].astype(np.float32),
+        "translation": motion_dict["translation"].astype(np.float32),   
     }
 
 

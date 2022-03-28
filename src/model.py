@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import tensorflow as tf
 from scipy.spatial.transform import Rotation as R
@@ -7,7 +9,7 @@ from . import skinning
 from . import smpl
 
 
-def load_model():
+def load_model(garment_model_path):
     return {
         "smpl": smpl.SMPL(
             "assets/SMPL/basicModel_f_lbs_10_207_0_v1.0.0.pkl"
@@ -33,13 +35,13 @@ def load_model():
             compile=False
         ),
 
-        "tshirt/gru": tf.keras.models.load_model(
-            "trained_models/tshirt/gru",
+        "garment/gru": tf.keras.models.load_model(
+            os.path.join(garment_model_path, "gru"),
             compile=False
         ),
 
-        "tshirt/decoder": tf.keras.models.load_model(
-            "trained_models/tshirt/decoder",
+        "garment/decoder": tf.keras.models.load_model(
+            os.path.join(garment_model_path, "decoder"),
             compile=False
         )
     }
@@ -80,7 +82,7 @@ def run_model(model_dict, motion):
 
     # Run model
     print("[INFO] Run recurrent regressor...")
-    v_encoded = model_dict["tshirt/gru"].predict({
+    v_encoded = model_dict["garment/gru"].predict({
         'shape': np.expand_dims(shape, axis=0),
         'pose_encoded': np.expand_dims(motion['pose_encoded'], axis=0),
         'pose_encoded_vel': np.expand_dims(motion['pose_encoded_vel'], axis=0),
@@ -92,7 +94,7 @@ def run_model(model_dict, motion):
     })[0]
 
     print("[INFO] Project from latent space to canonical space...")
-    v_canonical = model_dict["tshirt/decoder"].predict(v_encoded)
+    v_canonical = model_dict["garment/decoder"].predict(v_encoded)
     v_canonical_flat = tf.reshape(v_canonical, (-1, 3))
     num_vertices = v_canonical.shape[-2]
  

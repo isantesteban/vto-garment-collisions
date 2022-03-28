@@ -17,6 +17,12 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "model_path",
+        type=str,
+        help="path to the trained model"
+    )
+
+    parser.add_argument(
         "--export_dir",
         type=str,
         default="results",
@@ -26,14 +32,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     v_garment, v_body = run_model(
-        model_dict=load_model(), 
+        model_dict=load_model(args.model_path), 
         motion=load_motion(args.motion_path)
     )
 
     # Save meshes
     os.makedirs(args.export_dir, exist_ok=True)
 
-    _, f_garment = load_obj("assets/meshes/tshirt.obj")
+    garment_name = os.path.basename(args.model_path)
+    _, f_garment = load_obj(f"assets/meshes/{garment_name}.obj")
     _, f_body = load_obj("assets/meshes/body.obj")
 
     for i in range(len(v_garment)):
